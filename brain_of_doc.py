@@ -24,15 +24,4 @@ messages = [
     }
 ]
 
-# step4: Send message
-
-response = client.messages.create(
-    model="MiniMax-M3",
-    max_tokens=1000,
-    messages=messages,
-)
-
-# step5: Print message
-
-print(response)
 
