@@ -16,3 +16,4 @@ image_path = os.path.join(folder, "sample-image.jpg")
 with open(image_path, "rb") as file:
     image_data = base64.b64encode(file.read()).decode("utf-8")
 
+client = Groq(api_key=api_key)
