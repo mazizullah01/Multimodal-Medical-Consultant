@@ -24,3 +24,13 @@ with audio_path.open("wb") as file:
     for chunk in audio:
         file.write(chunk)  
 
+# Step4: Play audio
+import platform
+import subprocess
+
+if platform.system() == "Darwin": #macOs
+    subprocess.run(["afplay", str(audio_path)])
+elif platform.system() == "Windows":
+    os.startfile(audio_path)
+else: # Linux
+    subprocess.run(["xdg-open", str(audio_path)])        
