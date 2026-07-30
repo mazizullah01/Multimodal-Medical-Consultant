@@ -15,3 +15,12 @@ audio = deepgram.speak.v1.audio.generate(
     encoding="mp3",
 )
 
+# Step3: Save audio
+from pathlib import Path
+
+audio_file="test-output.mp3"
+audio_path = Path(__file__).with_name(audio_file)
+with audio_path.open("wb") as file:
+    for chunk in audio:
+        file.write(chunk)  
+
