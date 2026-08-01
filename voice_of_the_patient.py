@@ -19,4 +19,6 @@ def record_audio(file_path, timeout=20, phrase_time_limit=None):
     timeout (int): Maximum time to wait for a phrase to start (in seconds).
     phrase_time_lfimit (int): Maximum time for the phrase to be recorded (in seconds).
     """
-  
+    recognizer = sr.Recognizer()
+
+   
