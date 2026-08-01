@@ -8,5 +8,8 @@ dependencies = [
     "anthropic>=0.119.0",
     "deepgram-sdk>=6.1.1",
     "groq>=1.0.0",
+    "pyaudio>=0.2.14",
+    "pydub>=0.25.1",
     "python-dotenv>=1.2.1",
+    "speechrecognition>=3.17.0",
 ]
