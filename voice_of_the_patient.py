@@ -29,4 +29,10 @@ def record_audio(file_path, timeout=20, phrase_time_limit=None):
         #Record the audio
         audio_data = recognizer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
         logging.info("Recording complete")
-     
+        #Convert the recorded audio to an MP3 file
+        wav_data = audio_data.get_wav_data()
+        audio_segment = AudioSegment.from_wav(BytesIO(wav_data))
+        audio_segment.export(file_path, format="mp3", bitrate="128k")
+
+        logging.info(f"Audio saved to {file_path}")
+
