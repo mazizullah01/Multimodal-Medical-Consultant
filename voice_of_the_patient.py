@@ -36,3 +36,7 @@ def record_audio(file_path, timeout=20, phrase_time_limit=None):
 
         logging.info(f"Audio saved to {file_path}")
 
+audio_filepath="patient_voice_test.mp3"
+record_audio(audio_filepath, timeout=20, phrase_time_limit=10)
+
+
