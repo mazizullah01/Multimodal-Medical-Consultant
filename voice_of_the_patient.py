@@ -39,4 +39,13 @@ def record_audio(file_path, timeout=20, phrase_time_limit=None):
 audio_filepath="patient_voice_test.mp3"
 record_audio(audio_filepath, timeout=20, phrase_time_limit=10)
 
+# Step2: Covert audio to text
+
+from groq import Groq
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+groq_api_key = os.environ.get  ("GROQ_API_KEY")
 
