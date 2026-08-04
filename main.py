@@ -1,6 +1,4 @@
 
-# play audio for the Patient
-
 iface = gr.Interface(
     fn=process_inputs,
     inputs=[
