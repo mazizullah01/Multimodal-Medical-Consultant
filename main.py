@@ -1,15 +1,6 @@
+import gradio as gr
 
-iface = gr.Interface(
-    fn=process_inputs,
-    inputs=[
-        gr.Audio(sources=["microphone", "upload"], type="filepath", label="Patient Voice"),
-        gr.Image(type="filepath", label="Patient Image"),
-        gr.Video(label="Patient Video"),         
-    ],
-    outputs=[
-        gr.Textbox(label="Speech to Text"),
-        gr.Textbox(label="Doctor's Response"),
-        gr.Audio(label="Doctor Voice"),
-    ],
-    title="AI Skin Specialist with Vision and voice",
-)
+from voice_of_the_patient import transcribe_patient_voice
+from brain_of_doc_groq  import brain_of_the_doctor
+from voice_of_the_doc import convert_text_to_doctor_audio, play_audio
+
