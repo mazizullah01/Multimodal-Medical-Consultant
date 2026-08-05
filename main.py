@@ -16,4 +16,11 @@ def process_inputs(audio_filepath, image_filepath, video_filepath):
         patient_text=patient_text,
         image_filepath=image_filepath,
         vedio_filepath=video_filepath,
-  
+    )
+    # We will convert this text responce from the doctor to audio responce
+    doctor_audio = convert_text_to_doctor_audio(doctor_text)
+
+    # play audio for the Patient
+    play_audio(doctor_audio)
+    return patient_text, doctor_text, str(doctor_audio)
+
