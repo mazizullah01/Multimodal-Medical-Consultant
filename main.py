@@ -11,3 +11,9 @@ def process_inputs(audio_filepath, image_filepath, video_filepath):
     # User  will ask question in audio and this audio will be convertes to text
     patient_text = transcribe_patient_voice(audio_filepath)
 
+    # This text + users image/vedio will be sent to brain of the doctor and brain of the doctor  will respond in text
+    doctor_text = brain_of_the_doctor(
+        patient_text=patient_text,
+        image_filepath=image_filepath,
+        vedio_filepath=video_filepath,
+  
