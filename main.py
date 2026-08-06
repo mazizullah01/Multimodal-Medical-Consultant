@@ -15,7 +15,7 @@ def process_inputs(audio_filepath, image_filepath, video_filepath):
     doctor_text = brain_of_the_doctor(
         patient_text=patient_text,
         image_filepath=image_filepath,
-        vedio_filepath=video_filepath,
+        video_filepath=video_filepath,
     )
     # We will convert this text responce from the doctor to audio responce
     doctor_audio = convert_text_to_doctor_audio(doctor_text)
@@ -24,3 +24,22 @@ def process_inputs(audio_filepath, image_filepath, video_filepath):
     play_audio(doctor_audio)
     return patient_text, doctor_text, str(doctor_audio)
 
+iface = gr.Interface(
+    fn=process_inputs,
+    inputs=[
+        gr.Audio(source="microphone", type="filepath", label="Patient Voice"),
+        gr.Image(type="filepath", label="Patient Image"),
+        gr.Video(label="Patient Video"),         
+    ],
+    outputs=[
+        gr.Textbox(label="Speech to Text"),
+        gr.Textbox(label="Doctor's Response"),
+        gr.Audio(label="Doctor Voice"),
+    ],
+    title="AI Skin Specialist with Vision and voice",
+)
+
+if __name__ == "__main__":
+    iface.launch(debug=True)
+
+# Running on local URL:  http://127.0.0.1:7860
