@@ -1,38 +1,21 @@
 """HTML fragments for the consultation UI."""
 
-SIDEBAR_HTML = """
-<div class="side-brand">
-  <div class="brand-logo" aria-label="AI Skin Specialist logo">
-    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <path d="M16 3.5 26 7v8.2c0 6.4-4 11.1-10 13.3-6-2.2-10-6.9-10-13.3V7l10-3.5Z" stroke="currentColor" stroke-width="2.4"/>
-      <path d="M16 10v11M10.5 15.5h11" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
-    </svg>
-  </div>
-  <div class="brand-copy"><strong>AI Skin</strong><span>SPECIALIST</span></div>
-</div>
-<div class="nav-item active" aria-current="page"><span class="nav-icon">▦</span>Consultation Hub</div>
-<div class="support-box"><b>SUPPORT</b>Clinical assistance available<br>24/7 for specialists.</div>
-"""
-
 HEADER_HTML = """
 <header class="top-header">
+  <div class="header-brand">
+    <div class="brand-logo" aria-label="AI Skin Specialist logo">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 3.5 26 7v8.2c0 6.4-4 11.1-10 13.3-6-2.2-10-6.9-10-13.3V7l10-3.5Z" stroke="currentColor" stroke-width="2.4"/>
+        <path d="M16 10v11M10.5 15.5h11" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="brand-copy"><strong>AI Skin</strong><span>SPECIALIST</span></div>
+  </div>
   <div class="page-title">
     <strong>Consultation Assistant</strong>
     <span>Voice, Image, and Video Based Analysis</span>
   </div>
   <div class="privacy-pill">♢ &nbsp; Privacy-first consultation</div>
-  <div class="doctor">
-    <div><strong>Dr. Specialist</strong><span>Dermatologist</span></div>
-    <div class="doctor-avatar" role="img" aria-label="Dr. Specialist profile image">
-      <svg viewBox="0 0 54 54" fill="none" aria-hidden="true">
-        <rect width="54" height="54" fill="#dceef9"/>
-        <circle cx="27" cy="20" r="9" fill="#f2c9ad"/>
-        <path d="M17.5 18.5c.8-8.4 18-10 19.3.7-4.1-1.1-8.8-3.5-12.8-1.3-2.2 1.2-3.2 2-6.5.6Z" fill="#425b6b"/>
-        <path d="M11 54c.8-12 6.6-18 16-18s15.2 6 16 18H11Z" fill="#fff"/>
-        <path d="m22 36 5 8 5-8M27 44v10" stroke="#1494e8" stroke-width="2"/>
-      </svg>
-    </div>
-  </div>
 </header>
 """
 
@@ -54,20 +37,12 @@ STEPS_DONE_HTML = """
 </ol>
 """
 
-PATIENT_CARD_HEAD_HTML = """
-<div class="card-head">
-  <div class="card-title">
-    <span class="title-icon">
-      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
-        <rect x="4" y="3" width="20" height="25" rx="2" stroke="currentColor" stroke-width="2.6"/>
-        <path d="M9 9h10M9 14h7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-        <circle cx="23" cy="20" r="4" fill="#e4f0fa" stroke="currentColor" stroke-width="2.4"/>
-        <path d="M16.5 29c.5-3.5 3-5.5 6.5-5.5s6 2 6.5 5.5" fill="#e4f0fa" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-      </svg>
-    </span>
-    Patient Input
+INPUTS_INTRO_HTML = """
+<div class="inputs-intro">
+  <div class="inputs-intro-copy">
+    <strong>Your consultation inputs</strong>
+    <span>Record your concern, add a clear skin photo, and optionally attach a short video.</span>
   </div>
-  <p>Provide voice, image, or video for comprehensive<br>analysis.</p>
 </div>
 """
 
@@ -82,6 +57,7 @@ RESPONSE_CARD_HEAD_HTML = """
     </span>
     Doctor Response
   </div>
+  <p class="response-sub">Specialist guidance appears here after you analyze your inputs.</p>
   <span class="ready-dot">AI Assistant Ready</span>
 </div>
 """
@@ -96,7 +72,7 @@ EMPTY_STATUS_HTML = """
     </svg>
   </div>
   <strong>Ready for Analysis</strong>
-  <span>Your consultation summary,<br>transcript, and guidance will<br>appear below after analysis.</span>
+  <span>Your consultation summary, transcript, and guidance will appear here after analysis.</span>
 </div></div>
 """
 
@@ -115,12 +91,26 @@ DISCLAIMER_HTML = (
     "Seek urgent care for rapidly worsening, painful, bleeding, or otherwise concerning symptoms.</div>"
 )
 
-VOICE_FIELD_HTML = (
-    '<div class="field-heading">Describe your skin concern <span>♩ &nbsp; Patient Voice</span></div>'
-)
+VOICE_FIELD_HTML = """
+<div class="tile-heading">
+  <span class="tile-title">Voice</span>
+  <em class="tile-badge required">Required</em>
+</div>
+<p class="tile-hint">Describe your skin concern in a short voice note.</p>
+"""
 
-IMAGE_FIELD_HTML = (
-    '<div class="field-heading">Skin Image <em>RECOMMENDED</em></div>'
-)
+IMAGE_FIELD_HTML = """
+<div class="tile-heading">
+  <span class="tile-title">Photo</span>
+  <em class="tile-badge recommended">Recommended</em>
+</div>
+<p class="tile-hint">Upload a clear photo of the affected skin area.</p>
+"""
 
-VIDEO_FIELD_HTML = '<div class="field-heading">Skin Video</div>'
+VIDEO_FIELD_HTML = """
+<div class="tile-heading">
+  <span class="tile-title">Video</span>
+  <em class="tile-badge optional">Optional</em>
+</div>
+<p class="tile-hint">Add a short clip if it helps show the concern.</p>
+"""
