@@ -4,7 +4,8 @@ Voice + image skin consultation demo (Gradio).
 
 ## Layout
 
-- `app/` — application code (UI, STT, vision doctor, TTS)
+- `app/` — pipeline + doctor services
+- `app/ui/` — Gradio layout, markup, soft-clinical CSS
 - `samples/` — demo media
 - `main.py` — entrypoint
 
