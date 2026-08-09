@@ -1,5 +1,6 @@
 import base64
 import os
+import re
 from io import BytesIO
 
 from dotenv import load_dotenv
@@ -17,6 +18,39 @@ def encode_image_for_groq(filepath):
     buffer = BytesIO()
     image.convert("RGB").save(buffer, format="JPEG", quality=75)
     return base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+
+def _extract_doctor_text(message):
+    """Return speakable patient-facing text from a Groq chat message."""
+    content = (message.content or "").strip()
+    if content:
+        return content
+
+    # Reasoning models sometimes leave content empty when the budget is used up
+    # by thinking, or when only reasoning is populated.
+    reasoning = getattr(message, "reasoning", None) or ""
+    reasoning = reasoning.strip()
+    if not reasoning:
+        return ""
+
+    # Prefer a clear final answer section if the model labeled one.
+    for marker in ("Final answer:", "Patient response:", "Response:"):
+        if marker.lower() in reasoning.lower():
+            idx = reasoning.lower().rfind(marker.lower())
+            tail = reasoning[idx + len(marker) :].strip()
+            if tail:
+                return tail
+
+    # Last resort: last non-empty line of reasoning (often the spoken answer).
+    lines = [line.strip() for line in reasoning.splitlines() if line.strip()]
+    return lines[-1] if lines else ""
+
+
+def _sanitize_for_speech(text):
+    # Drop markdown/noise that confuses TTS and sounds unnatural aloud.
+    text = re.sub(r"[*_`#\[\](){}]", " ", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
 
 
 def brain_of_the_doctor(patient_text, image_filepath=None, video_filepath=None):
@@ -43,21 +77,20 @@ def brain_of_the_doctor(patient_text, image_filepath=None, video_filepath=None):
         prompt += "\nThe patient also uploaded a video, but use the provided image as the visual reference."
 
     client = Groq(api_key=groq_api_key)
-    response = client.chat.completions.create(
-    model=os.environ.get("GROQ_MODEL", "qwen/qwen3.6-27b"),
-        max_completion_tokens=1000,
-
-        reasoning_format="hidden",
-        messages=[
+    # Keep enough completion budget so reasoning models still emit final content.
+    create_kwargs = {
+        "model": os.environ.get("GROQ_MODEL", "qwen/qwen3.6-27b"),
+        "max_completion_tokens": int(os.environ.get("GROQ_MAX_TOKENS", "2048")),
+        "messages": [
             {
                 "role": "system",
                 "content": (
-                "You are a skin care assistant. "
-                "Give general information, not a diagnosis. "
-                "Return only the response intended for the patient. "
-                "Never output analysis, reasoning, drafting notes, "
-                "self-checks, alternatives, or commentary about your instructions."),
-                
+                    "You are a skin care assistant. "
+                    "Give general information, not a diagnosis. "
+                    "Return only the response intended for the patient. "
+                    "Never output analysis, reasoning, drafting notes, "
+                    "self-checks, alternatives, or commentary about your instructions."
+                ),
             },
             {
                 "role": "user",
@@ -72,65 +105,21 @@ def brain_of_the_doctor(patient_text, image_filepath=None, video_filepath=None):
                 ],
             },
         ],
-    )
+    }
 
-    return response.choices[0].message.content
+    # Optional for reasoning models; ignored by models that do not support it.
+    reasoning_format = os.environ.get("GROQ_REASONING_FORMAT", "parsed")
+    if reasoning_format:
+        create_kwargs["reasoning_format"] = reasoning_format
 
+    response = client.chat.completions.create(**create_kwargs)
+    message = response.choices[0].message
+    doctor_text = _sanitize_for_speech(_extract_doctor_text(message))
 
-# OLD CODE KEPT FOR REFERENCE
-# import base64
-# import os
-# from io import BytesIO
-#
-# from dotenv import load_dotenv
-# from groq import Groq
-# from PIL import Image
-#
-#
-# folder = os.path.dirname(__file__)
-# env_path = os.path.join(folder, ".env")
-# load_dotenv(env_path)
-#
-# api_key = os.environ.get("GROQ_API_KEY")
-# if not api_key:
-#     raise ValueError("Missing GROQ_API_KEY in .env or environment")
-#
-#
-# image_path = os.path.join(folder, "sample-image.png")
-#
-# image = Image.open(image_path)
-# image.thumbnail((1024, 1024))
-#
-# buffer = BytesIO()
-# image.convert("RGB").save(buffer, format="JPEG", quality=75)
-# image_data = base64.b64encode(buffer.getvalue()).decode("utf-8")
-#
-# client = Groq(api_key=api_key)
-#
-# response = client.chat.completions.create(
-#     model=os.environ.get("GROQ_MODEL", "meta-llama/llama-4-scout-17b-16e-instruct"),
-#     max_completion_tokens=1000,
-#     messages=[
-#         {
-#             "role": "system",
-#             "content": "You are a helpful medical assistant. Give general information, not a diagnosis.",
-#         },
-#         {
-#             "role": "user",
-#             "content": [
-#                 {
-#                     "type": "text",
-#                     "text": "What do you see in this image? Give general skin care advice, not a diagnosis.",
-#                 },
-#                 {
-#                     "type": "image_url",
-#                     "image_url": {
-#                         "url": f"data:image/jpeg;base64,{image_data}",
-#                     },
-#                 },
-#             ],
-#         },
-#     ],
-# )
-#
-# print(response.choices[0].message.content)
+    if not doctor_text:
+        raise ValueError(
+            "The doctor model returned an empty response. "
+            "Try again, or set GROQ_MODEL to a vision model that reliably returns content."
+        )
+
+    return doctor_text

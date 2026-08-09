@@ -11,10 +11,14 @@ load_dotenv()
 
 
 def convert_text_to_doctor_audio(text, output_filepath=None):
+    speech_text = (text or "").strip()
+    if not speech_text:
+        raise ValueError("Cannot generate doctor audio without spoken text.")
+
     deepgram_api_key = os.environ.get("DEEPGRAM_API_KEY")
     deepgram = DeepgramClient(api_key=deepgram_api_key)
     audio = deepgram.speak.v1.audio.generate(
-        text=text[:1000],
+        text=speech_text[:1000],
         model=os.environ.get("DEEPGRAM_TTS_MODEL", "aura-2-thalia-en"),
         encoding="mp3",
     )
