@@ -27,7 +27,7 @@ def brain_of_the_doctor(patient_text, image_filepath=None, video_filepath=None):
     if not image_filepath:
         raise ValueError("Groq vision requires an image. Please upload a skin image.")
 
-    # Groq vision does not accept video here. When main.py passes both image and
+    # Groq vision does not accept video here. When the UI passes both image and
     # video, this uses the same image as the visual input and ignores the video.
     image_data = encode_image_for_groq(image_filepath)
 
@@ -46,10 +46,18 @@ def brain_of_the_doctor(patient_text, image_filepath=None, video_filepath=None):
     response = client.chat.completions.create(
     model=os.environ.get("GROQ_MODEL", "qwen/qwen3.6-27b"),
         max_completion_tokens=1000,
+
+        reasoning_format="hidden",
         messages=[
             {
                 "role": "system",
-                "content": "You are a careful skin care assistant. Give general information, not a diagnosis.",
+                "content": (
+                "You are a skin care assistant. "
+                "Give general information, not a diagnosis. "
+                "Return only the response intended for the patient. "
+                "Never output analysis, reasoning, drafting notes, "
+                "self-checks, alternatives, or commentary about your instructions."),
+                
             },
             {
                 "role": "user",
