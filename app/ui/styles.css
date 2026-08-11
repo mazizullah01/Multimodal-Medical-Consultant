@@ -255,7 +255,7 @@ body,
 
 .media-grid {
   display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr) !important;
   gap: clamp(12px, 2vw, 18px) !important;
   align-items: stretch !important;
   width: 100% !important;
@@ -274,10 +274,16 @@ body,
   border: 1px solid var(--app-line) !important;
   border-radius: 16px !important;
   box-shadow: var(--shadow-soft) !important;
-  padding: 18px 16px 16px !important;
-  min-height: 280px;
+  padding: 18px 16px 18px !important;
+  min-height: 300px;
   gap: 0 !important;
   transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.media-tile-voice {
+  position: relative;
+  min-height: 340px;
+  padding: 20px 18px 20px !important;
 }
 
 .media-tile:hover {
@@ -426,17 +432,23 @@ body,
   100% { box-shadow: 0 0 0 0 rgba(61, 133, 224, 0); }
 }
 
-/* Interactive fields — equal zones inside tiles */
+/* Interactive fields — voice primary + roomy upload zones */
+
+/* Hide Gradio device chip text ("No microphone found") */
+.media-tile-voice select.mic-select {
+  display: none !important;
+}
 
 .voice-recorder {
   min-height: 200px !important;
-  height: 200px !important;
+  height: auto !important;
   border: 1px solid #e2e8ee !important;
   border-radius: 12px !important;
   background: #f6f8fa !important;
   margin-bottom: 0 !important;
-  overflow: hidden;
+  overflow: visible !important;
   flex: 1 1 auto;
+  padding-bottom: 8px !important;
   transition: border-color var(--transition), box-shadow var(--transition), background var(--transition) !important;
 }
 
@@ -455,13 +467,15 @@ body,
 
 .upload-media {
   position: relative !important;
-  min-height: 200px !important;
-  height: 200px !important;
+  min-height: 240px !important;
+  height: auto !important;
   border: 2px dashed #acd5f2 !important;
   border-radius: 12px !important;
   background: #fbfcfd !important;
   margin-bottom: 0 !important;
-  overflow: hidden;
+  overflow: visible !important;
+  padding-bottom: 48px !important;
+  box-sizing: border-box !important;
   transition: border-color var(--transition), background var(--transition), box-shadow var(--transition) !important;
 }
 
@@ -474,6 +488,13 @@ body,
 
 .video-media {
   border-color: #d5dde6 !important;
+  min-height: 240px !important;
+}
+
+/* Keep source toolbars (upload / webcam icons) fully in the card */
+.media-tile-image,
+.media-tile-video {
+  overflow: visible !important;
 }
 
 .upload-media .label-wrap,
@@ -747,8 +768,8 @@ footer { display: none !important; }
 
   .voice-recorder,
   .upload-media {
-    height: 180px !important;
-    min-height: 180px !important;
+    height: auto !important;
+    min-height: 220px !important;
   }
 }
 

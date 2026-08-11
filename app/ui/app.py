@@ -3,12 +3,12 @@
 import gradio as gr
 
 from app.ui.layout import build_layout
-from app.ui.theme import load_css
+from app.ui.theme import load_css, load_head
 
 
 def build_app(process_inputs, clear_consultation):
     """Create the Blocks app with soft-clinical UI and bound callbacks."""
-    with gr.Blocks(css=load_css(), title="AI Skin Specialist") as demo:
+    with gr.Blocks(css=load_css(), head=load_head(), title="AI Skin Specialist") as demo:
         components = build_layout()
 
         components["analyze_btn"].click(
