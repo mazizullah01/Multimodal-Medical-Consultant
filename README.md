@@ -1,4 +1,4 @@
-# AI Skin Expert
+# Multimodal Medical Consultant
 
 A multimodal AI consultation assistant for skin concerns. Patients describe symptoms with a short voice note, upload a clear photo (and optionally a short video), then receive specialist-style guidance as both text and spoken audio.
 
