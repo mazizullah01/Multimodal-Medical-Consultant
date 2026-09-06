@@ -119,5 +119,6 @@ AI-generated educational guidance is **not** a medical diagnosis. Seek urgent ca
 
 ## Contact
 
-**Muhammad Aziz Ullah**  
-Email: [m.azizullah420@gmail.com](mailto:m.azizullah420@gmail.com)
+For any questions or support, feel free to reach out:
+
+- Email: **m.azizullah420@gmail.com**
