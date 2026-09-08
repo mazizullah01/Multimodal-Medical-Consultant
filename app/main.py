@@ -1,5 +1,3 @@
-"""AI Skin Specialist app entry — UI assembled via app.ui."""
-
 from app.pipeline import clear_consultation, process_inputs
 from app.ui import build_app
 
