@@ -1,4 +1,4 @@
-"""Consultation pipeline: STT → doctor vision → TTS (no Gradio layout)."""
+"""Consultation pipeline: STT → doctor vision → TTS (without Gradio layout)."""
 
 import gradio as gr
 
