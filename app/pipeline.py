@@ -26,13 +26,13 @@ def process_inputs(audio_filepath, image_filepath, video_filepath, progress=gr.P
             video_filepath=video_filepath,
         )
 
-        progress(0.82, desc="Preparing your audio response")
+        progress(0.85, desc="Preparing your audio response")
         doctor_audio = convert_text_to_doctor_audio(doctor_text)
         progress(1, desc="Consultation ready")
     except Exception as exc:
         raise gr.Error(f"We couldn't complete the consultation: {exc}") from exc
 
-    return (
+    return ( 
         patient_text,
         doctor_text,
         str(doctor_audio),
