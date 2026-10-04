@@ -7,11 +7,13 @@ from dotenv import load_dotenv
 from groq import Groq
 from PIL import Image
 
+from app.video_frames import extract_video_frame_jpegs
+
 load_dotenv()
 
 
-def encode_image_for_groq(filepath):
-    image = Image.open(filepath)
+def encode_image_for_groq(source):
+    image = Image.open(BytesIO(source) if isinstance(source, (bytes, bytearray)) else source)
     image.thumbnail((1024, 1024))
 
     buffer = BytesIO()
@@ -57,28 +59,41 @@ def brain_of_the_doctor(patient_text, image_filepath=None, video_filepath=None):
     if not groq_api_key:
         raise ValueError("Missing GROQ_API_KEY in .env or environment")
 
-    if not image_filepath:
-        raise ValueError("Groq vision requires an image. Please upload a skin image.")
+    if not image_filepath and not video_filepath:
+        raise ValueError("Please upload a skin photo or a short video.")
 
-    # Groq vision does not accept video here. When the UI passes both image and
-    # video, this uses the same image as the visual input and ignores the video.
-    image_data = encode_image_for_groq(image_filepath)
+    images = []
+    if image_filepath:
+        images.append(encode_image_for_groq(image_filepath))
+    if video_filepath:
+        images.extend(encode_image_for_groq(frame) for frame in extract_video_frame_jpegs(video_filepath))
+
+    if image_filepath and video_filepath:
+        visual_note = (
+            "The first image is a still photo of the affected skin. "
+            "The remaining images are frames sampled from the patient's video of the same area. "
+            "Use both."
+        )
+    elif video_filepath:
+        visual_note = (
+            "The images are frames sampled from the patient's video of the affected skin. "
+            "Base your comments on what is visible in those frames."
+        )
+    else:
+        visual_note = "The image is a photo of the affected skin."
 
     prompt = (
         "You are a confident, natural doctor specializing in skin care. Speak with the reassurance, clarity, and authority of a real doctor. "
         "Limit your entire response to two or three sentences maximum. "
-        "If the patient has provided a video, explain that you are reviewing the uploaded image because this model cannot process video directly. "
         "Do not use any special characters, symbols, asterisks, or markdown formatting in your response because it will be converted directly to audio.\n\n"
+        f"{visual_note}\n\n"
         f"Patient text: {patient_text}"
     )
-
-    if video_filepath:
-        prompt += "\nThe patient also uploaded a video, but use the provided image as the visual reference."
 
     client = Groq(api_key=groq_api_key)
     # Keep enough completion budget so reasoning models still emit final content.
     create_kwargs = {
-        "model": os.environ.get("GROQ_MODEL", "qwen/qwen3.6-27b"),
+        "model": os.environ.get("GROQ_MODEL", "qwen/qwen3.8-27b"),
         "max_completion_tokens": int(os.environ.get("GROQ_MAX_TOKENS", "2048")),
         "messages": [
             {
@@ -95,12 +110,15 @@ def brain_of_the_doctor(patient_text, image_filepath=None, video_filepath=None):
                 "role": "user",
                 "content": [
                     {"type": "text", "text": prompt},
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/jpeg;base64,{image_data}",
-                        },
-                    },
+                    *[
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{image_data}",
+                            },
+                        }
+                        for image_data in images
+                    ],
                 ],
             },
         ],

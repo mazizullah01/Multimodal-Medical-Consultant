@@ -1,5 +1,7 @@
 """HTML fragments for the consultation UI."""
 
+from html import escape
+
 HEADER_HTML = """
 <header class="top-header">
   <div class="header-brand">
@@ -22,7 +24,7 @@ HEADER_HTML = """
 STEPS_IDLE_HTML = """
 <ol class="steps-strip" aria-label="Consultation steps">
   <li class="step-chip active"><span class="n">1</span>Record voice</li>
-  <li class="step-chip"><span class="n">2</span>Add photo</li>
+  <li class="step-chip"><span class="n">2</span>Add visual</li>
   <li class="step-chip"><span class="n">3</span>Analyze</li>
   <li class="step-chip"><span class="n">4</span>Results</li>
 </ol>
@@ -31,9 +33,18 @@ STEPS_IDLE_HTML = """
 STEPS_DONE_HTML = """
 <ol class="steps-strip" aria-label="Consultation steps">
   <li class="step-chip done"><span class="n">✓</span>Record voice</li>
-  <li class="step-chip done"><span class="n">✓</span>Add photo</li>
+  <li class="step-chip done"><span class="n">✓</span>Add visual</li>
   <li class="step-chip done"><span class="n">✓</span>Analyze</li>
   <li class="step-chip done active"><span class="n">4</span>Results</li>
+</ol>
+"""
+
+STEPS_NEED_VISUAL_HTML = """
+<ol class="steps-strip" aria-label="Consultation steps">
+  <li class="step-chip done"><span class="n">✓</span>Record voice</li>
+  <li class="step-chip active"><span class="n">2</span>Add visual</li>
+  <li class="step-chip"><span class="n">3</span>Analyze</li>
+  <li class="step-chip"><span class="n">4</span>Results</li>
 </ol>
 """
 
@@ -41,7 +52,7 @@ INPUTS_INTRO_HTML = """
 <div class="inputs-intro">
   <div class="inputs-intro-copy">
     <strong>Your consultation inputs</strong>
-    <span>Record your concern, add a clear skin photo, and optionally attach a short video.</span>
+    <span>Record your concern, then add a skin photo or a short video.</span>
   </div>
 </div>
 """
@@ -86,6 +97,20 @@ SUCCESS_STATUS_HTML = """
 </div>
 """
 
+
+def notice_html(title, message, blocked=False):
+    """A single in-panel notice. Blocked notices hide empty result fields."""
+    blocked_class = " result-blocked" if blocked else ""
+    return f"""
+<div class="notice-banner{blocked_class}" role="status">
+  <span class="notice-icon" aria-hidden="true">!</span>
+  <div>
+    <strong>{escape(title)}</strong>
+    <span>{escape(message)}</span>
+  </div>
+</div>
+"""
+
 DISCLAIMER_HTML = (
     '<div class="disclaimer">AI-generated educational guidance is not a medical diagnosis. '
     "Seek urgent care for rapidly worsening, painful, bleeding, or otherwise concerning symptoms.</div>"
@@ -102,15 +127,15 @@ VOICE_FIELD_HTML = """
 IMAGE_FIELD_HTML = """
 <div class="tile-heading">
   <span class="tile-title">Photo</span>
-  <em class="tile-badge recommended">Recommended</em>
+  <em class="tile-badge recommended">Either</em>
 </div>
-<p class="tile-hint">Upload a clear photo of the affected skin area.</p>
+<p class="tile-hint">Upload a clear photo of the affected skin area, or use a video instead.</p>
 """
 
 VIDEO_FIELD_HTML = """
 <div class="tile-heading">
   <span class="tile-title">Video</span>
-  <em class="tile-badge optional">Optional</em>
+  <em class="tile-badge recommended">Either</em>
 </div>
-<p class="tile-hint">Add a short clip if it helps show the concern.</p>
+<p class="tile-hint">A short clip of the affected skin is enough on its own.</p>
 """

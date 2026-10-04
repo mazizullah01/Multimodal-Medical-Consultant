@@ -736,6 +736,55 @@ button.analyze-btn:disabled,
   font-size: 12px;
 }
 
+.notice-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #fff8f3;
+  border: 1px solid #f3d7c4;
+  border-radius: 12px;
+  color: #7a3410;
+  padding: 14px 16px;
+  font-size: 13px;
+  margin: 18px 0 10px;
+  animation: slide-in 380ms ease;
+  box-shadow: 0 8px 18px rgba(138, 61, 18, 0.05);
+}
+
+.notice-banner .notice-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #e07a3d;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  flex: 0 0 22px;
+  margin-top: 1px;
+}
+
+.notice-banner strong {
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--font-display);
+}
+
+.notice-banner span {
+  display: block;
+  color: #8d5a3c;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Gradio paints a black "Error" pill on every output when a call raises.
+   Notices above are the patient-facing message, so hide that overlay. */
+.response-card .wrap:has(> .error) {
+  display: none !important;
+}
+
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: none; }
@@ -746,8 +795,12 @@ button.analyze-btn:disabled,
   to { opacity: 1; transform: none; }
 }
 
+.result-body:has(.result-empty) > .form,
+.result-body:has(.result-blocked) > .form,
 .result-body:has(.result-empty) .output-box,
-.result-body:has(.result-empty) .disclaimer {
+.result-body:has(.result-empty) .disclaimer,
+.result-body:has(.result-blocked) .output-box,
+.result-body:has(.result-blocked) .disclaimer {
   display: none !important;
 }
 
