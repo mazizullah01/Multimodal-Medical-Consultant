@@ -48,6 +48,15 @@ STEPS_NEED_VISUAL_HTML = """
 </ol>
 """
 
+STEPS_ANALYZE_HTML = """
+<ol class="steps-strip" aria-label="Consultation steps">
+  <li class="step-chip done"><span class="n">✓</span>Record voice</li>
+  <li class="step-chip done"><span class="n">✓</span>Add visual</li>
+  <li class="step-chip active"><span class="n">3</span>Analyze</li>
+  <li class="step-chip"><span class="n">4</span>Results</li>
+</ol>
+"""
+
 INPUTS_INTRO_HTML = """
 <div class="inputs-intro">
   <div class="inputs-intro-copy">
@@ -93,6 +102,19 @@ SUCCESS_STATUS_HTML = """
   <div>
     <strong>Analysis complete</strong>
     <span>Your private consultation is ready below.</span>
+  </div>
+</div>
+"""
+
+
+def progress_html(message):
+    """One in-panel progress banner for the current analysis stage."""
+    return f"""
+<div class="progress-banner" role="status" aria-live="polite">
+  <span class="progress-spinner" aria-hidden="true"></span>
+  <div>
+    <strong>Analyzing consultation</strong>
+    <span>{escape(message)}</span>
   </div>
 </div>
 """

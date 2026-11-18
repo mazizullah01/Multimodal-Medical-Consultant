@@ -66,7 +66,10 @@ def brain_of_the_doctor(patient_text, image_filepath=None, video_filepath=None):
     if image_filepath:
         images.append(encode_image_for_groq(image_filepath))
     if video_filepath:
-        images.extend(encode_image_for_groq(frame) for frame in extract_video_frame_jpegs(video_filepath))
+        # Groq allows ≤3 images: keep room for the photo when both are present.
+        frame_count = 2 if image_filepath else 3
+        frames = extract_video_frame_jpegs(video_filepath, count=frame_count)
+        images.extend(encode_image_for_groq(frame) for frame in frames)
 
     if image_filepath and video_filepath:
         visual_note = (

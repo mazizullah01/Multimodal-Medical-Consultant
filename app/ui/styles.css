@@ -698,6 +698,45 @@ button.analyze-btn:disabled,
   margin-top: 8px;
 }
 
+.progress-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--app-blue-soft);
+  border: 1px solid #c5e2f6;
+  border-radius: 12px;
+  color: var(--app-blue-dark);
+  padding: 14px 16px;
+  font-size: 13px;
+  margin: 18px 0 10px;
+  animation: slide-in 380ms ease;
+}
+
+.progress-banner .progress-spinner {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  margin-top: 2px;
+  border: 2px solid rgba(8, 120, 189, 0.25);
+  border-top-color: var(--app-blue-dark);
+  border-radius: 50%;
+  animation: progress-spin 0.8s linear infinite;
+}
+
+.progress-banner strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.progress-banner span {
+  color: #3d6f8f;
+  font-size: 12px;
+}
+
+@keyframes progress-spin {
+  to { transform: rotate(360deg); }
+}
+
 .success-banner {
   display: flex;
   align-items: flex-start;
@@ -800,7 +839,8 @@ button.analyze-btn:disabled,
 .result-body:has(.result-empty) .output-box,
 .result-body:has(.result-empty) .disclaimer,
 .result-body:has(.result-blocked) .output-box,
-.result-body:has(.result-blocked) .disclaimer {
+.result-body:has(.result-blocked) .disclaimer,
+.result-body:has(.progress-banner) .disclaimer {
   display: none !important;
 }
 

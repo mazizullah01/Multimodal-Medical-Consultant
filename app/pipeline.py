@@ -2,8 +2,6 @@
 
 import logging
 
-import gradio as gr
-
 from app.doctor_brain import brain_of_the_doctor
 from app.doctor_voice import convert_text_to_doctor_audio
 from app.patient_voice import transcribe_patient_voice
@@ -63,6 +61,11 @@ def _explain_failure(stage, exc):
             "No guidance was returned",
             "Try again with a clearer photo or a shorter video of the affected area.",
         )
+    if "too many images" in detail:
+        return (
+            "Too many images for one review",
+            "Use either a clear photo, a short video, or both with a shorter clip, then try again.",
+        )
     return (
         "We couldn't complete this consultation",
         "Please try again with a short voice note and a clear photo or video.",
@@ -82,20 +85,33 @@ def _failure(stage, exc, patient_text, doctor_text, doctor_audio):
     )
 
 
-def process_inputs(audio_filepath, image_filepath, video_filepath, progress=gr.Progress()):
+def _stage(patient_text, doctor_text, doctor_audio, message):
+    """Single in-panel progress update for the Doctor Response card."""
+    return (
+        patient_text or "",
+        doctor_text or "",
+        str(doctor_audio) if doctor_audio else None,
+        markup.progress_html(message),
+        markup.STEPS_ANALYZE_HTML,
+    )
+
+
+def process_inputs(audio_filepath, image_filepath, video_filepath):
     """Transcribe the concern, review the photo or video, and create the voice response."""
     if not audio_filepath:
-        return _attention(
+        yield _attention(
             "Voice note needed",
             "Record a short description of your skin concern, then choose Analyze Consultation.",
             markup.STEPS_IDLE_HTML,
         )
+        return
     if not image_filepath and not video_filepath:
-        return _attention(
+        yield _attention(
             "A photo or video is needed",
             "Add a clear photo or a short clip of the affected skin, then analyze again.",
             markup.STEPS_NEED_VISUAL_HTML,
         )
+        return
 
     if video_filepath and image_filepath:
         review_label = "Reviewing your photo and video"
@@ -109,17 +125,18 @@ def process_inputs(audio_filepath, image_filepath, video_filepath, progress=gr.P
     doctor_audio = None
     stage = "voice"
     try:
-        progress(0.15, desc="Transcribing your voice note")
+        yield _stage("", "", None, "Transcribing your voice note")
         patient_text = (transcribe_patient_voice(audio_filepath) or "").strip()
         if not patient_text:
-            return _attention(
+            yield _attention(
                 "We couldn't hear a concern",
                 "Record the voice note again somewhere quiet, and speak for a few seconds.",
                 markup.STEPS_IDLE_HTML,
             )
+            return
 
         stage = "review"
-        progress(0.5, desc=review_label)
+        yield _stage(patient_text, "", None, review_label)
         doctor_text = brain_of_the_doctor(
             patient_text=patient_text,
             image_filepath=image_filepath,
@@ -127,13 +144,13 @@ def process_inputs(audio_filepath, image_filepath, video_filepath, progress=gr.P
         )
 
         stage = "audio"
-        progress(0.85, desc="Preparing your audio response")
+        yield _stage(patient_text, doctor_text, None, "Preparing your audio response")
         doctor_audio = convert_text_to_doctor_audio(doctor_text)
-        progress(1, desc="Consultation ready")
     except Exception as exc:
-        return _failure(stage, exc, patient_text, doctor_text, doctor_audio)
+        yield _failure(stage, exc, patient_text, doctor_text, doctor_audio)
+        return
 
-    return (
+    yield (
         patient_text,
         doctor_text,
         str(doctor_audio),

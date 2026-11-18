@@ -25,6 +25,7 @@ def build_app(process_inputs, clear_consultation):
                 components["status"],
                 components["steps"],
             ],
+            show_progress=False,
         )
         components["clear_btn"].click(
             fn=clear_consultation,
